@@ -64,13 +64,13 @@ module Evercookie
               { data[:key] => cookies[data[:key]] }
         end
       end
-      render nothing: true
+      head :ok
     end
 
     # Renders png image with encoded evercookie value in it
     def ec_png
       if not cookies[Evercookie.cookie_png].present?
-        render :nothing => true, :status => 304
+        head :not_modified
         return true
       end
 
@@ -79,26 +79,26 @@ module Evercookie
       response.headers["Expires"] = "Tue, 31 Dec 2030 23:30:45 GMT"
       response.headers["Cache-Control"] = "private, max-age=630720000"
 
-      render text: get_blob_png, status: 200, content_type: 'image/png'
+      render plain: get_blob_png, status: 200, content_type: 'image/png'
     end
 
     # Renders page with etag header for evercookie js script
     def ec_etag
       if not cookies[Evercookie.cookie_etag].present?
-        render :text => request.headers['If-None-Match'] || '', :status => 304
+        render :plain => request.headers['If-None-Match'] || '', :status => 304
         return true
       end
 
       puts "cache value (#{Evercookie.cookie_etag}): #{cookies[Evercookie.cookie_etag]}"
 
       response.headers["Etag"] = cookies[Evercookie.cookie_etag]
-      render text: cookies[Evercookie.cookie_etag]
+      render plain: cookies[Evercookie.cookie_etag]
     end
 
     # Renders page with cache header for evercookie js script
     def ec_cache
       if not cookies[Evercookie.cookie_cache].present?
-        render :nothing => true, :status => 304
+        head :not_modified
         return true
       end
 
@@ -109,12 +109,12 @@ module Evercookie
       response.headers["Expires"] = "Tue, 31 Dec 2030 23:30:45 GMT"
       response.headers["Cache-Control"] = "private, max-age=630720000"
 
-      render text: cookies[Evercookie.cookie_cache]
+      render plain: cookies[Evercookie.cookie_cache]
     end
 
     # Renders evercookie value for basic authentication if it was set
     def ec_auth
-      render text: @username
+      render plain: @username
     end
 
     private
