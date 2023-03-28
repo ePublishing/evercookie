@@ -1,4 +1,4 @@
 module Evercookie
   # Current gem version
-  VERSION = "0.1.3.epublishing"
+  VERSION = "0.1.4.epublishing"
 end

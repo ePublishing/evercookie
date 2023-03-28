@@ -70,7 +70,7 @@ module Evercookie
     # Renders png image with encoded evercookie value in it
     def ec_png
       if not cookies[Evercookie.cookie_png].present?
-        head :not_modified
+        head :no_content
         return true
       end
 
@@ -85,7 +85,12 @@ module Evercookie
     # Renders page with etag header for evercookie js script
     def ec_etag
       if not cookies[Evercookie.cookie_etag].present?
-        render :plain => request.headers['If-None-Match'] || '', :status => 304
+        if request.headers['If-None-Match'].present?
+          render :plain => request.headers['If-None-Match'], :status => :not_modified
+        else
+          head :no_content
+        end
+
         return true
       end
 
@@ -98,7 +103,7 @@ module Evercookie
     # Renders page with cache header for evercookie js script
     def ec_cache
       if not cookies[Evercookie.cookie_cache].present?
-        head :not_modified
+        head :no_content
         return true
       end
 
